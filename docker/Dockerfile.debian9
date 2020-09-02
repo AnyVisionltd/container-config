@@ -6,7 +6,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     gnupg2 \
     jq \
-    software-properties-common
+    software-properties-common \
+    procps
 
 RUN curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add - && \
     curl -s -L https://nvidia.github.io/nvidia-docker/debian9/nvidia-docker.list | \
