@@ -19,17 +19,18 @@
 ##### Global variables #####
 
 DOCKER   ?= docker
-REGISTRY ?= nvidia
+REGISTRY ?= gcr.io/rec-repo
 VERSION  ?= 1.0.0-beta.1
 
 ##### Public rules #####
 
-all: ubuntu18.04 ubuntu16.04 ubi8
+all: ubuntu18.04 ubuntu16.04 ubi8 debian9
 
 push:
 	$(DOCKER) push "$(REGISTRY)/container-toolkit:$(VERSION)-ubuntu18.04"
 	$(DOCKER) push "$(REGISTRY)/container-toolkit:$(VERSION)-ubuntu16.04"
 	$(DOCKER) push "$(REGISTRY)/container-toolkit:$(VERSION)-ubi8"
+	$(DOCKER) push "$(REGISTRY)/container-toolkit:$(VERSION)-debian9"
 
 push-short:
 	$(DOCKER) tag "$(REGISTRY)/container-toolkit:$(VERSION)-ubuntu18.04" "$(REGISTRY)/container-toolkit:$(VERSION)"
@@ -55,6 +56,10 @@ ubi8:
 		--build-arg VERSION="$(VERSION)" \
 		--file docker/Dockerfile.ubi8 .
 
+debian9:
+	$(DOCKER) build --pull \
+                --tag $(REGISTRY)/container-toolkit:$(VERSION)-debian9 \
+                --file docker/Dockerfile.debian9 .
 clean:
 	bash $(CURDIR)/test/main.sh clean $(CURDIR)/shared
 
