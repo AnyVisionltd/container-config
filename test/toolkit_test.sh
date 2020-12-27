@@ -17,7 +17,7 @@ testing::toolkit::main() {
 	local -r uid=$(id -u)
 	local -r gid=$(id -g)
 
-	testing::docker_run::toolkit::shell 'toolkit /usr/local/nvidia'
+	testing::docker_run::toolkit::shell 'toolkit /usr/local/nvidia/toolkit'
 	docker run -v "${shared_dir}:/work" alpine sh -c "chown -R ${uid}:${gid} /work/"
 
 	# Ensure toolkit dir is correctly setup
@@ -35,4 +35,8 @@ testing::toolkit::main() {
 	test -e "${shared_dir}/usr/local/nvidia/toolkit/nvidia-container-runtime.real"
 
 	test -e "${shared_dir}/usr/local/nvidia/toolkit/.config/nvidia-container-runtime/config.toml"
+}
+
+testing::toolkit::cleanup() {
+	:
 }
