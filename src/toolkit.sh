@@ -25,7 +25,7 @@ packages=("/usr/bin/nvidia-container-runtime" \
 	"/etc/nvidia-container-runtime/config.toml")
 
 toolkit::remove() {
-	local -r destination="${1:-"${TOOLKIT_DIR}"}"
+	local -r destination="${1:-"${SOURCE_DIR}"}"
 	log INFO "${FUNCNAME[0]} $*"
 
 	rm -rf "${destination}"
@@ -69,7 +69,7 @@ toolkit::setup::cli_binary() {
 	cat <<- EOF | tr -s ' \t' > ${destination}/nvidia-container-cli
 		#! /bin/sh
 		LD_LIBRARY_PATH="${destination}" \
-		PATH="\$PATH:${destination}" \
+		PATH="${destination}:\$PATH" \
 		${destination}/nvidia-container-cli.real \
 			"\$@"
 	EOF
@@ -87,7 +87,7 @@ toolkit::setup::toolkit_binary() {
 
 	cat <<- EOF | tr -s ' \t' > ${destination}/nvidia-container-toolkit
 		#! /bin/sh
-		PATH="\$PATH:${destination}" \
+		PATH="${destination}:\$PATH" \
 		${destination}/nvidia-container-toolkit.real \
 			-config "${destination}/.config/nvidia-container-runtime/config.toml" \
 			"\$@"
@@ -105,7 +105,7 @@ toolkit::setup::runtime_binary() {
 
 	cat <<- EOF | tr -s ' \t' > ${destination}/nvidia-container-runtime
 		#! /bin/sh
-		PATH="\$PATH:${destination}" \
+		PATH="${destination}:\$PATH" \
 		XDG_CONFIG_HOME="${destination}/.config" \
 		${destination}/nvidia-container-runtime.real \
 			"\$@"
@@ -120,11 +120,14 @@ Usage: $0 COMMAND [ARG...]
 
 Commands:
   install DESTINATION
+
+Description:
+  DESTINATION	The path where the toolkit directory resides (e.g: /usr/local/nvidia/toolkit).
 EOF
 }
 
 toolkit::install() {
-	local destination="$1/toolkit"; shift
+	local destination="$1"; shift
 
 	if [[ "$#" -ne 0 ]]; then toolkit::usage; exit 1; fi
 
