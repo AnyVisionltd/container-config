@@ -21,6 +21,10 @@ build:
 
 integration:
   stage: test
+  except:
+    variables:
+    - $CI_COMMIT_MESSAGE =~ /\[skip[ _-]tests?\]/i
+    - $SKIP_TESTS
   services:
     - docker:dind
   image: docker:stable
@@ -37,7 +41,7 @@ release:
     - apk add make
     - docker login -u "${REGISTRY_USER}" -p "${REGISTRY_TOKEN}"
 
-    - make VERSION="${CI_COMMIT_TAG}" all
-    - make VERSION="${CI_COMMIT_TAG}" push
-    - make VERSION="${CI_COMMIT_TAG}" push-short
-    - make VERSION="${CI_COMMIT_TAG}" push-latest
+    - make VERSION="${CI_COMMIT_TAG#v}" all
+    - make VERSION="${CI_COMMIT_TAG#v}" push
+    - make VERSION="${CI_COMMIT_TAG#v}" push-short
+    - make VERSION="${CI_COMMIT_TAG#v}" push-latest
